@@ -33,7 +33,9 @@ import java.util.List;
 
 public class Main extends Activity {
 
+    private Boolean conn;
     static JSONObject product;
+    static String messageObj;
     TextView textLogin;
     TextView textPass;
     static TextView textError;
@@ -158,8 +160,10 @@ public class Main extends Activity {
                 if (success == 1) {
                     JSONArray productObj = json.getJSONArray("product");
                     product = productObj.getJSONObject(0);
+                    conn = true;
                 } else {
-
+                    messageObj = json.getString("message");
+                    conn = false;
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -173,12 +177,12 @@ public class Main extends Activity {
         protected void onPostExecute(String file_url) {
             // dismiss the dialog once done
             pDialog.dismiss();
-            if (true) {
-                Intent logged = new Intent(Main.this, logged.class);
-                startActivity(logged);
-                finish();
+            if (conn) {
+                    Intent logged = new Intent(Main.this, logged.class);
+                    startActivity(logged);
+                    finish();
             } else {
-                textError.setText("Cannot to connect to the server! Please try again later.");
+                textError.setText(messageObj);
             }
         }
 
