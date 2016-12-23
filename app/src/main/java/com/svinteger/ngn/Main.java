@@ -2,16 +2,18 @@ package com.svinteger.ngn;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -33,11 +35,10 @@ import java.util.List;
 
 public class Main extends Activity {
 
-    private Boolean conn;
+    private Boolean conn, inet;
     static JSONObject product;
     static String messageObj;
-    TextView textLogin;
-    TextView textPass;
+    TextView textLogin, textPass;
     static TextView textError;
     Button btnLogin;
     ProgressDialog pDialog;
@@ -59,12 +60,12 @@ public class Main extends Activity {
         textLogin = (EditText) findViewById(R.id.input_login);
         textPass = (EditText) findViewById(R.id.input_password);
         textError = (TextView) findViewById(R.id.errorText);
-        btnLogin = (Button) findViewById(R.id.button);
+        btnLogin = (Button) findViewById(R.id.enter);
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (textLogin.getText().length() > 0 && textPass.getText().length() > 0 && textLogin.getText() != "" && textPass.getText() != "") {
+                if (textLogin.getText().length() == 10 && textPass.getText().length() > 3) {
                     String login = textLogin.getText().toString();
                     String pass = textPass.getText().toString();
                     new log().execute(login, pass);
@@ -75,7 +76,7 @@ public class Main extends Activity {
                     ft.replace(R.id.asd, fh);
                     ft.commit();*/
 
-                    textError.setText("Длина логина и пароля должна быть более 5 символов.");
+                    textError.setText("Не верно введен логин или пароль!");
                 }
             }
         });
@@ -90,8 +91,7 @@ public class Main extends Activity {
      */
     public Action getIndexApiAction() {
         Thing object = new Thing.Builder()
-                .setName("Main Page") // TODO: Define a title for the content shown.
-                // TODO: Make sure this auto-generated URL is correct.
+                .setName("Main Page")
                 .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
                 .build();
         return new Action.Builder(Action.TYPE_VIEW)
@@ -142,8 +142,6 @@ public class Main extends Activity {
             String url = "http://www.n-g-n.com/getcustomerdetails.php";
             String login;
             String password;
-            login = "";
-            password = "";
             login = args[0];
             password = args[1];
 
@@ -151,22 +149,26 @@ public class Main extends Activity {
             params.add(new BasicNameValuePair("NgnLogin", login));
             params.add(new BasicNameValuePair("NgnPassword", password));
 
-            JSONObject json = jsonParser.makeHttpRequest(url, "GET", params);
+            if (isNetworkAvailable()) {
+                JSONObject json = jsonParser.makeHttpRequest(url, "GET", params);
 
-            Log.d("Create Response", json.toString());
-
-            try {
-                int success = json.getInt(TAG_SUCCESS);
-                if (success == 1) {
-                    JSONArray productObj = json.getJSONArray("product");
-                    product = productObj.getJSONObject(0);
-                    conn = true;
-                } else {
-                    messageObj = json.getString("message");
-                    conn = false;
+                try {
+                    int success = json.getInt(TAG_SUCCESS);
+                    if (success == 1) {
+                        JSONArray productObj = json.getJSONArray("product");
+                        product = productObj.getJSONObject(0);
+                        conn = true;
+                    } else {
+                        messageObj = json.getString("message");
+                        conn = false;
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
+            } else {
+                inet = false;
+                conn = false;
+                messageObj = "Нет интернет соединения!";
             }
             return null;
         }
@@ -174,17 +176,23 @@ public class Main extends Activity {
         /**
          * After completing background task Dismiss the progress dialog
          **/
-        protected void onPostExecute(String file_url) {
+        protected void onPostExecute(String u) {
             // dismiss the dialog once done
             pDialog.dismiss();
             if (conn) {
                     Intent logged = new Intent(Main.this, logged.class);
                     startActivity(logged);
                     finish();
+            } else if(!inet){
+                Toast tost = Toast.makeText(getApplicationContext(), messageObj, Toast.LENGTH_SHORT);
+                tost.show();
             } else {
                 textError.setText(messageObj);
             }
         }
-
+    }
+    public boolean isNetworkAvailable() {
+        final ConnectivityManager connectivityManager = ((ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE));
+        return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
     }
 }

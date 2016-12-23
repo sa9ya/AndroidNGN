@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="20dp">
@@ -8,21 +9,111 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/menu"
+        android:paddingTop="1dp"
         android:layout_marginBottom="20dp">
 
-        <TextView
-            android:text="Ваш Email"
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/textView"
-            android:layout_weight="1" />
+            android:src="@drawable/home"
+            android:id="@+id/home"
+            android:layout_weight="1"
+            android:contentDescription="@string/home"
+            android:paddingTop="5pt"
+            android:paddingBottom="5pt" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/veh"
+            android:id="@+id/oilPrice"
+            android:layout_weight="1"
+            android:contentDescription="@string/oil_price"
+            android:paddingTop="5pt"
+            android:paddingBottom="5pt" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/contacts"
+            android:id="@+id/contacts"
+            android:layout_weight="1"
+            android:contentDescription="@string/contacts"
+            android:paddingTop="5pt"
+            android:paddingBottom="5pt" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <TextView
-            android:text="@string/textview"
+            android:text="@string/litrBalance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/mail"
-            android:layout_weight="1" />
+            android:id="@+id/allLitrs"
+            android:layout_weight="1"
+            android:textSize="20sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/litrs"
+            android:layout_weight="1"
+            android:textAlignment="viewEnd"
+            android:textSize="25sp"
+            android:textColor="@color/colorRed"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:text="@string/creditLimit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/creditLimit"
+        android:layout_weight="1"
+        android:textSize="20sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/credit"
+        android:layout_weight="1"
+        android:textAlignment="viewEnd"
+        android:textSize="25sp"
+        android:textColor="@color/colorRed" />
+
+</LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="@string/debt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/debtLitrs"
+            android:layout_weight="1"
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/debt"
+            android:layout_weight="1"
+            android:textAlignment="viewEnd"
+            android:textSize="25sp"
+            android:textColor="@color/colorRed" />
 
     </LinearLayout>
 
@@ -33,61 +124,27 @@
         android:layout_marginBottom="20dp">
 
         <TextView
-            android:text="TextView"
+            android:text="@string/moneyBalance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/textView2"
-            android:layout_weight="1" />
+            android:id="@+id/moneyBalance"
+            android:layout_weight="1"
+            android:textSize="20sp" />
 
         <TextView
-            android:text="TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/textView3"
-            android:layout_weight="1" />
+            android:id="@+id/money"
+            android:layout_weight="1"
+            android:textAlignment="viewEnd"
+            android:textSize="25sp"
+            android:textColor="@color/colorRed" />
+
     </LinearLayout>
 
-    <LinearLayout
-        android:orientation="horizontal"
+    <ListView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp">
-
-        <TextView
-            android:text="TextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/textView5"
-            android:layout_weight="1" />
-
-        <TextView
-            android:text="TextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/textView4"
-            android:layout_weight="1" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp">
-
-        <TextView
-            android:text="TextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/textView7"
-            android:layout_weight="1" />
-
-        <TextView
-            android:text="TextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/textView6"
-            android:layout_weight="1" />
-    </LinearLayout>
+        android:layout_height="155sp"
+        android:id="@+id/list" />
 
 </LinearLayout>

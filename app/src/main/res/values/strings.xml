@@ -7,7 +7,13 @@
     <string name="phone">+38(___)_______</string>
     <string name="login">Войти</string>
     <string name="designed_and_developed_by_svinteger_com">Designed and developed by Svinteger.com</string>
-    <string name="textview">TextView</string>
-
-
+    <string name="moneyBalance">Денежный баланс:</string>
+    <string name="litrBalance">Доступно литров:</string>
+    <string name="debt">Задолженность:</string>
+    <string name="creditLimit">Кредитный лимит:</string>
+    <string name="limitDays">Лимитные дни:</string>
+    <string name="limitLitrs">Лимитные литры:</string>
+    <string name="available">Доступно</string>
+    <string name="credit">Кредит:</string>
+    <string name="cardBalance">Балансовая карта</string>
 </resources>
