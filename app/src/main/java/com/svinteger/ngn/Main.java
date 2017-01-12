@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -41,9 +40,6 @@ public class Main extends Activity {
     TextView textLogin, textPass;
     static TextView textError;
     Button btnLogin;
-    ProgressDialog pDialog;
-    JSONParser jsonParser = new JSONParser();
-    private static final String TAG_SUCCESS = "success";
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -54,8 +50,6 @@ public class Main extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
-
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         textLogin = (EditText) findViewById(R.id.input_login);
         textPass = (EditText) findViewById(R.id.input_password);
@@ -133,7 +127,7 @@ public class Main extends Activity {
             pDialog = new ProgressDialog(Main.this);
             pDialog.setMessage("Авторизация...");
             pDialog.setIndeterminate(false);
-            pDialog.setCancelable(true);
+            pDialog.setCancelable(false);
             pDialog.show();
         }
 
@@ -145,11 +139,12 @@ public class Main extends Activity {
             login = args[0];
             password = args[1];
 
-            List<NameValuePair> params = new ArrayList<NameValuePair>();
+            List<NameValuePair> params = new ArrayList<>();
             params.add(new BasicNameValuePair("NgnLogin", login));
             params.add(new BasicNameValuePair("NgnPassword", password));
 
             if (isNetworkAvailable()) {
+                inet = true;
                 JSONObject json = jsonParser.makeHttpRequest(url, "GET", params);
 
                 try {
@@ -164,6 +159,7 @@ public class Main extends Activity {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    System.out.println("Lost innet conn!");
                 }
             } else {
                 inet = false;

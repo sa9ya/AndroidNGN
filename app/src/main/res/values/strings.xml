@@ -9,11 +9,11 @@
     <string name="designed_and_developed_by_svinteger_com">Designed and developed by Svinteger.com</string>
     <string name="moneyBalance">Денежный баланс:</string>
     <string name="litrBalance">Доступно литров:</string>
-    <string name="debt">Задолженность:</string>
-    <string name="creditLimit">Кредитный лимит:</string>
+    <string name="debt">Использовано кредиту:</string>
+    <string name="creditLimit">Доступно кредиту(л):</string>
     <string name="limitDays">Лимитные дни:</string>
     <string name="limitLitrs">Лимитные литры:</string>
     <string name="available">Доступно</string>
-    <string name="credit">Кредит:</string>
+    <string name="credit">Кредитный лимит:</string>
     <string name="cardBalance">Балансовая карта</string>
 </resources>

@@ -2,13 +2,7 @@ package com.svinteger.ngn;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.TextUtils;
-import android.text.style.RelativeSizeSpan;
-import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -46,24 +40,15 @@ public class CardHistory extends Activity {
         String litr_place = card.getStringExtra("litr_place");
         String LitrBalance = card.getStringExtra("LitrBalance");
         cardType.setText(litr_place + " " + cardcode);
-        if (LitrBalance.contains(",")) {
-            String[] a = LitrBalance.split(",");
-            SpannableString span1 = new SpannableString(a[0]);
-            span1.setSpan(new RelativeSizeSpan(1.5f), 0, a[0].length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            span1.setSpan(new StyleSpan(Typeface.BOLD), 0, a[0].length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-            first = TextUtils.concat(span1,",",a[1]);
-        } else {
-            String[] a = LitrBalance.split(" ");
-            SpannableString span1 = new SpannableString(a[0]);
-            span1.setSpan(new RelativeSizeSpan(1.5f), 0, a[0].length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            span1.setSpan(new StyleSpan(Typeface.BOLD), 0, a[0].length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-            first = TextUtils.concat(span1," ",a[1]);
-        }
         if(litr_place.equals(getString(R.string.cardBalance))) {
             limitDayText.setText(R.string.debt);
             limitLitrsText.setText(R.string.credit);
             try {
-                //limitDay.setText();
+                if(logged.AcceptLitrs - Main.product.getDouble("credit") > 0) {
+                    limitDay.setText("0,00");
+                } else {
+                    LitrBalanceStyle.LitrBalanceStyle(String.format("%.2f", logged.AcceptLitrs - Main.product.getDouble("credit")),limitDay," l");
+                }
                 limitLitrs.setText(Main.product.getString("credit"));
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -78,9 +63,7 @@ public class CardHistory extends Activity {
                 e.printStackTrace();
             }
         }
-        /*SpannableString ss1=  new SpannableString(LitrBalance);
-        ss1.setSpan(new RelativeSizeSpan(1.5f), 0,2, 0); // set size*/
-        availableLitrs.setText(first);
+        LitrBalanceStyle.LitrBalanceStyle(LitrBalance, availableLitrs, " л");
         String fill;
         String des;
         if (logged.product.length()-2 > 1) {
@@ -98,7 +81,8 @@ public class CardHistory extends Activity {
                         fill = logged.product.getJSONObject(String.valueOf(i)).getString("litrsoff");
                     }
                     descr.setText(des);
-                    val.setText(fill+" л");
+                    LitrBalanceStyle.LitrBalanceStyle(fill, val, " л");
+                    //val.setText(fill+" л");
                     data.setText(logged.product.getJSONObject(String.valueOf(i)).getString("date_added"));
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -113,7 +97,9 @@ public class CardHistory extends Activity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            tost.show();
+            if (tost != null) {
+                tost.show();
+            }
         }
     }
 }

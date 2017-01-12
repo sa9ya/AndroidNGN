@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -33,6 +32,8 @@ import java.util.List;
 public class logged extends Activity {
 
     public Intent i;
+    public static Double AcceptLitrs;
+    public Double sumLitrs = 0.0;;
     private Boolean conn=false, inet=false;
     static JSONObject product;
     static String messageObj;
@@ -43,8 +44,6 @@ public class logged extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.log_activity);
 
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
         final ListView listView = (ListView) findViewById(R.id.list);
 
         TextView litrs = (TextView) findViewById(R.id.litrs);
@@ -52,28 +51,22 @@ public class logged extends Activity {
         TextView debt = (TextView) findViewById(R.id.debt);
         TextView money = (TextView) findViewById(R.id.money);
 
-        try {
-            if(Main.product.getDouble("credit") > 0.0) {
-
-            } else {
-                credit.setText("0");
-                debt.setText("0");
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        Double sumLitrs = 0.0;
-
         List<HashMap<String, String>> fillMaps = new ArrayList<>();
 
         try {
             for (int i = 0; i < Main.product.length()-4; i++) {
+                sumLitrs += Main.product.getJSONObject(String.valueOf(i)).getDouble("litrnum");
                 HashMap<String, String> map = new HashMap<>();
                 map.put("code", Main.product.getJSONObject(String.valueOf(i)).getString("code"));
                 if (Main.product.getJSONObject(String.valueOf(i)).getInt("litr_place") > 0) {
                     map.put("litr_place", "Балансовая карта");
-                    map.put("LitrBalance", String.format("%(.2f",Main.product.getDouble("total")) + " л");
-                    map.put("UAHBalance", String.format("%(.2f", Main.product.getDouble("total")*Main.product.getDouble("customer_price")) + " грн"); // uah " \u20B4"
+                    if(Main.product.getDouble("total")*Main.product.getDouble("customer_price") < 0) {
+                        map.put("LitrBalance", String.format("%(.2f", Main.product.getDouble("total")+Main.product.getDouble("credit")) + " л");
+                        map.put("UAHBalance", String.format("%(.2f", (Main.product.getDouble("total")+Main.product.getDouble("credit")) * Main.product.getDouble("customer_price")) + " грн");
+                    } else {
+                        map.put("LitrBalance", String.format("%(.2f", Main.product.getDouble("total")) + " л");
+                        map.put("UAHBalance", String.format("%(.2f", Main.product.getDouble("total") * Main.product.getDouble("customer_price")) + " грн"); // uah " \u20B4"
+                    }
                 } else {
                     map.put("litr_place", "Литровая карта");
                     map.put("LitrBalance", Main.product.getJSONObject(String.valueOf(i)).getString("litrnum") + " л");
@@ -81,6 +74,21 @@ public class logged extends Activity {
                 }
                 fillMaps.add(map);
             }
+
+            AcceptLitrs = Main.product.getDouble("credit") + sumLitrs + Main.product.getDouble("total");
+            if(Main.product.getDouble("credit") > 0.0) {
+                credit.setText(String.format("%(.2f", Main.product.getDouble("credit")));
+                if (AcceptLitrs - Main.product.getDouble("credit") > 0) {
+                    debt.setText("0,00");
+                } else {
+                    debt.setText(String.format("%(.2f", AcceptLitrs - Main.product.getDouble("credit")));
+                }
+            } else {
+                credit.setText("0");
+                debt.setText("0");
+            }
+            litrs.setText(String.format("%(.2f", AcceptLitrs));
+            money.setText(String.format("%(.2f", (sumLitrs+Main.product.getDouble("total"))*Main.product.getDouble("customer_price")));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -91,14 +99,12 @@ public class logged extends Activity {
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //Object df = parent.getItemAtPosition(position);
-
                 HashMap<String,String> mip =(HashMap<String,String>)listView.getItemAtPosition(position);
                 String code = mip.get("code");
                 String litr_place = mip.get("litr_place");
                 String LitrBalance = mip.get("LitrBalance");
                 i = new Intent(logged.this, CardHistory.class);
-                //If you wanna send any data to nextActicity.class you can use
+                //отправка данных в другой класс
                 i.putExtra("code", code);
                 i.putExtra("litr_place", litr_place);
                 i.putExtra("LitrBalance", LitrBalance);
@@ -106,16 +112,6 @@ public class logged extends Activity {
                 new log().execute(code);
             }
         });
-
-        try {
-            for (int i = 0; i<Main.product.length()-4; i++) {
-                sumLitrs += Main.product.getJSONObject(String.valueOf(i)).getDouble("litrnum");
-            }
-            money.setText(String.format("%(.2f", (sumLitrs+Main.product.getDouble("total"))*Main.product.getDouble("customer_price")));
-            litrs.setText(String.format("%(.2f",Main.product.getDouble("total")));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
     class log extends AsyncTask<String, String, String> {
 
@@ -129,7 +125,7 @@ public class logged extends Activity {
             super.onPreExecute();
             pDialog = new ProgressDialog(logged.this);
             pDialog.setIndeterminate(false);
-            pDialog.setCancelable(true);
+            pDialog.setCancelable(false);
             pDialog.show();
         }
 
